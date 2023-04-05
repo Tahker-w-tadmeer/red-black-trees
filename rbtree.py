@@ -114,5 +114,33 @@ class RBTree:
                 stack.append(curr.left)
         return size
 
+    def rotate_left(self, node: Node):
+        y = node.right
+        node.right = y.left
+        if y.left is None:
+            node = y.parent.left
+        y.parent = node.parent
+        if node.parent is None:
+            self.root = y
+        elif node == node.parent.left:
+            node.parent.left = y
+        else:
+            node.parent.right = y
+        y.left = node
+        node.parent = y
 
+    def rotate_right(self, node: Node):
+        y = node.left
+        node.left = y.right
+        if y.right is None:
+            node = y.parent.right
+        y.parent = node.parent
+        if node.parent is None:
+            self.root = y
+        elif node == node.parent.right:
+            node.parent.right = y
+        else:
+            node.parent.left = y
+        y.right = node
+        node.parent = y
 
