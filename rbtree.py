@@ -49,6 +49,10 @@ class RBTree:
                 uncle.color = NodeColor.BLACK
                 node.parent.parent.color = NodeColor.RED
                 self._fix_insert(node.parent.parent)
+                return
+            if node.parent==node.parent.parent.right:
+                if node==node.parent.right:
+                    return
 
     @staticmethod
     def _insert_at(key, parent: Node) -> Node:
