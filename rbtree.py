@@ -2,7 +2,6 @@ from enum import Enum
 from collections import deque
 
 
-
 class NodeColor(Enum):
     RED = 0
     BLACK = 1
