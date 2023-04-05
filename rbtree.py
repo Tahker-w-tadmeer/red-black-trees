@@ -38,19 +38,17 @@ class RBTree:
             return node.parent.right
 
     def _fix_insert(self, node: Node):
-        if node.parent==None:
-            node.color=NodeColor.BLACK
+        if node.parent is None:
+            node.color = NodeColor.BLACK
             return
 
         if node.parent.color == NodeColor.RED:
             uncle = self._get_uncle(node)
-            if uncle.color==NodeColor.RED:
-                node.parent.color=NodeColor.BLACK
-                uncle.color=NodeColor.BLACK
-                node.parent.parent.color=NodeColor.RED
+            if uncle.color == NodeColor.RED:
+                node.parent.color = NodeColor.BLACK
+                uncle.color = NodeColor.BLACK
+                node.parent.parent.color = NodeColor.RED
                 self._fix_insert(node.parent.parent)
-
-
 
     @staticmethod
     def _insert_at(key, parent: Node) -> Node:
