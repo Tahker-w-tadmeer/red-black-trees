@@ -2,7 +2,6 @@ from enum import Enum
 from collections import deque
 
 
-
 class NodeColor(Enum):
     RED = 0
     BLACK = 1
@@ -75,8 +74,18 @@ class RBTree:
                     return node
                 parent = parent.left
 
-    def search(self, key) -> Node:
-        pass
+    def search(self, key):
+        node = self.root
+
+        while node is not None:
+            if node.key == key:
+                return node
+            elif node.key < key:
+                node = node.left
+            else:
+                node = node.right
+
+        return None
 
     def height(self) -> int:
         node = self.root
@@ -119,5 +128,33 @@ class RBTree:
                 stack.append(curr.left)
         return size
 
+    def rotate_left(self, node: Node):
+        y = node.right
+        node.right = y.left
+        if y.left is None:
+            node = y.parent.left
+        y.parent = node.parent
+        if node.parent is None:
+            self.root = y
+        elif node == node.parent.left:
+            node.parent.left = y
+        else:
+            node.parent.right = y
+        y.left = node
+        node.parent = y
 
+    def rotate_right(self, node: Node):
+        y = node.left
+        node.left = y.right
+        if y.right is None:
+            node = y.parent.right
+        y.parent = node.parent
+        if node.parent is None:
+            self.root = y
+        elif node == node.parent.right:
+            node.parent.right = y
+        else:
+            node.parent.left = y
+        y.right = node
+        node.parent = y
 
