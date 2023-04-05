@@ -1,4 +1,5 @@
 from enum import Enum
+from collections import deque
 
 
 class NodeColor(Enum):
@@ -23,28 +24,81 @@ class RBTree:
     def insert(self, key) -> None:
         node = self._insert_at(key, self.root)
 
-    def _insert_at(self, key, parent: Node) -> Node:
-        if key > parent.key:
-            if parent.right is not None:
-                return self._insert_at(key, parent.right)
-            node = Node(key)
-            node.parent = parent
-            parent.right = node
-        else:
-            if parent.left is not None:
-                return self._insert_at(key, parent.left)
-            node = Node(key)
-            node.parent = parent
-            parent.left = node
+        self._fix_insert(node)
 
-        return node
+    @staticmethod
+    def _get_uncle(node: Node):
+        if node.parent is None:
+            return None
+
+        if node.parent.right == node:
+            return node.parent.left
+        else:
+            return node.parent.right
+
+    def _fix_insert(self, node: Node):
+        uncle = self._get_uncle(node)
+
+    @staticmethod
+    def _insert_at(key, parent: Node) -> Node:
+        if parent.key == -1:
+            parent.key = key
+            return parent
+
+        node = Node(key)
+        node.parent = parent
+        while True:
+            if key > parent.key:
+                if parent.right is None:
+                    parent.right = node
+                    return node
+                parent = parent.right
+            else:
+                if parent.left is None:
+                    parent.left = node
+                    return node
+                parent = parent.left
 
     def search(self, key) -> Node:
         pass
 
     def height(self) -> int:
-        pass
+        node = self.root
+        if node is None:
+            return 0
+
+        queue = deque()
+        queue.append(node)
+        height = 0
+
+        while queue:
+            level_size = len(queue)
+
+            for i in range(level_size):
+                current_node = queue.popleft()
+
+                if current_node.left is not None:
+                    queue.append(current_node.left)
+
+                if current_node.right is not None:
+                    queue.append(current_node.right)
+
+            height += 1
+
+        return height
 
     def size(self) -> int:
-        pass
+        node = self.root
 
+        if node is None:
+            return 0
+        stack = [node]
+        size = 0
+        while stack:
+            curr = stack.pop()
+            size += 1
+            if curr.right:
+                stack.append(curr.right)
+            if curr.left:
+                stack.append(curr.left)
+        return size
