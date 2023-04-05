@@ -17,12 +17,27 @@ class Node:
 
 class RBTree:
     def __init__(self):
-        self.NULL = Node(-1)
-        self.NULL.color = NodeColor.BLACK
-        self.root = self.NULL
+        self.root = Node(-1)
+        self.root.color = NodeColor.BLACK
 
     def insert(self, key) -> None:
-        pass
+        node = self._insert_at(key, self.root)
+
+    def _insert_at(self, key, parent: Node) -> Node:
+        if key > parent.key:
+            if parent.right is not None:
+                return self._insert_at(key, parent.right)
+            node = Node(key)
+            node.parent = parent
+            parent.right = node
+        else:
+            if parent.left is not None:
+                return self._insert_at(key, parent.left)
+            node = Node(key)
+            node.parent = parent
+            parent.left = node
+
+        return node
 
     def search(self, key) -> Node:
         pass
