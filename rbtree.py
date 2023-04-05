@@ -70,8 +70,18 @@ class RBTree:
                     return node
                 parent = parent.left
 
-    def search(self, key) -> Node:
-        pass
+    def search(self, key):
+        node = self.root
+
+        while node is not None:
+            if node.key == key:
+                return node
+            elif node.key < key:
+                node = node.left
+            else:
+                node = node.right
+
+        return None
 
     def height(self) -> int:
         node = self.root
