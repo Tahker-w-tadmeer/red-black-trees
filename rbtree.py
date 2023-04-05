@@ -43,15 +43,33 @@ class RBTree:
 
         if node.parent.color == NodeColor.RED:
             uncle = self._get_uncle(node)
-            if uncle.color == NodeColor.RED:
+
+            if uncle is not None and uncle.color == NodeColor.RED:
                 node.parent.color = NodeColor.BLACK
                 uncle.color = NodeColor.BLACK
                 node.parent.parent.color = NodeColor.RED
                 self._fix_insert(node.parent.parent)
                 return
-            if node.parent==node.parent.parent.right:
-                if node==node.parent.right:
-                    return
+            if node.parent == node.parent.parent.right:
+                if node == node.parent.right:
+                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
+                    self.rotate_left(node.parent.parent)
+
+                else:
+
+                    self.rotate_right(node.parent)
+                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
+                    self.rotate_left(node.parent.parent)
+            else:
+                if node == node.parent.left:
+                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
+                    self.rotate_right(node.parent.parent)
+
+                else:
+
+                    self.rotate_left(node.parent)
+                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
+                    self.rotate_right(node.parent.parent)
 
     @staticmethod
     def _insert_at(key, parent: Node) -> Node:
@@ -129,10 +147,13 @@ class RBTree:
         return size
 
     def rotate_left(self, node: Node):
+        if node is None:
+            return
         y = node.right
         node.right = y.left
-        if y.left is None:
-            node = y.parent.left
+        if y.left is not None:
+            y.left.parent = node
+
         y.parent = node.parent
         if node.parent is None:
             self.root = y
@@ -144,10 +165,12 @@ class RBTree:
         node.parent = y
 
     def rotate_right(self, node: Node):
+        if node is None:
+            return
         y = node.left
         node.left = y.right
-        if y.right is None:
-            node = y.parent.right
+        if y.right is not None:
+            y.right.parent = node
         y.parent = node.parent
         if node.parent is None:
             self.root = y
@@ -157,4 +180,3 @@ class RBTree:
             node.parent.left = y
         y.right = node
         node.parent = y
-
