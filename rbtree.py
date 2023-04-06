@@ -1,13 +1,8 @@
-from enum import Enum
 from collections import deque
+from helper import Printable, NodeColor
 
 
-class NodeColor(Enum):
-    RED = 0
-    BLACK = 1
-
-
-class Node:
+class Node(Printable):
     def __init__(self, key):
         self.color = NodeColor.RED
         self.key = key
@@ -18,70 +13,84 @@ class Node:
 
 class RBTree:
     def __init__(self):
-        self.root = Node(-1)
-        self.root.color = NodeColor.BLACK
+        self.root = None
 
     def insert(self, key) -> None:
-        node = self._insert_at(key, self.root)
+        if self.root is None:
+            self.root = Node(key)
+            self.root.color = NodeColor.BLACK
+            return
+
+        node = Node(key)
+        self._insert_at(node, self.root)
 
         self._fix_insert(node)
+
+    def printRoot(self):
+        print(self.root.display())
 
     @staticmethod
     def _get_uncle(node: Node):
         if node.parent is None:
             return None
 
-        if node.parent.right == node:
-            return node.parent.left
+        grandparent = node.parent.parent
+        if grandparent is None:
+            return None
+
+        if grandparent.right == node.parent:
+            return grandparent.left
         else:
-            return node.parent.right
+            return grandparent.right
+
+    @staticmethod
+    def _is_black(node: Node) -> bool:
+        if node is None:
+            return True
+
+        return node.color == NodeColor.BLACK
 
     def _fix_insert(self, node: Node):
         if node.parent is None:
             node.color = NodeColor.BLACK
             return
 
-        if node.parent.color == NodeColor.RED:
-            uncle = self._get_uncle(node)
+        if RBTree._is_black(node.parent):
+            return
 
-            if uncle is not None and uncle.color == NodeColor.RED:
-                node.parent.color = NodeColor.BLACK
-                uncle.color = NodeColor.BLACK
-                node.parent.parent.color = NodeColor.RED
-                self._fix_insert(node.parent.parent)
-                return
-            if node.parent == node.parent.parent.right:
-                if node == node.parent.right:
-                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
-                    self.rotate_left(node.parent.parent)
+        uncle = RBTree._get_uncle(node)
+        if not RBTree._is_black(uncle):
+            node.parent.color = NodeColor.BLACK
+            uncle.color = NodeColor.BLACK
+            node.parent.parent.color = NodeColor.RED
+            self._fix_insert(node.parent.parent)
+            return
 
-                else:
+        parent = node.parent
+        grandparent = node.parent.parent
+        if parent == grandparent.left and node == parent.left:
+            parent.color = NodeColor.BLACK
+            grandparent.color = NodeColor.RED
+            self.rotate_right(grandparent)
+        elif parent == grandparent.left and node == parent.right:
+            self.rotate_left(parent)
+            node.color = NodeColor.BLACK
+            grandparent.color = NodeColor.RED
+            self.rotate_right(grandparent)
+        elif parent == grandparent.right and node == parent.right:
+            parent.color = NodeColor.BLACK
+            grandparent.color = NodeColor.RED
+            self.rotate_left(grandparent)
+        elif parent == grandparent.right and node == parent.left:
+            self.rotate_right(parent)
+            node.color = NodeColor.BLACK
+            grandparent.color = NodeColor.RED
+            self.rotate_left(grandparent)
 
-                    self.rotate_right(node.parent)
-                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
-                    self.rotate_left(node.parent.parent)
-            else:
-                if node == node.parent.left:
-                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
-                    self.rotate_right(node.parent.parent)
-
-                else:
-
-                    self.rotate_left(node.parent)
-                    node.parent.color, node.parent.parent.color = node.parent.parent.color, node.parent.color
-                    self.rotate_right(node.parent.parent)
-
-    @staticmethod
-    def _insert_at(key, parent: Node) -> Node:
-        if parent.key == -1:
-            parent.key = key
-            return parent
-
-        node = Node(key)
-
+    def _insert_at(self, node, parent: Node) -> Node:
         while True:
             node.parent = parent
-            if key > parent.key:
+            if node.key > parent.key:
                 if parent.right is None:
                     parent.right = node
                     return node
@@ -99,9 +108,9 @@ class RBTree:
             if node.key == key:
                 return node
             elif node.key < key:
-                node = node.left
-            else:
                 node = node.right
+            else:
+                node = node.left
 
         return None
 
@@ -147,8 +156,9 @@ class RBTree:
         return size
 
     def rotate_left(self, node: Node):
-        if node is None:
+        if node.right is None:
             return
+
         y = node.right
         node.right = y.left
         if y.left is not None:
@@ -165,12 +175,14 @@ class RBTree:
         node.parent = y
 
     def rotate_right(self, node: Node):
-        if node is None:
+        if node.left is None:
             return
+
         y = node.left
         node.left = y.right
         if y.right is not None:
             y.right.parent = node
+
         y.parent = node.parent
         if node.parent is None:
             self.root = y
