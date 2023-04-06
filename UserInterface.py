@@ -2,10 +2,12 @@ from rbtree import RBTree
 
 tree = RBTree()
 
+print("##################")
+print("Enter 1 to load dictionary \nEnter 2 to print Dictionary Size")
+print("Enter 3 to insert word \nEnter 4 to look up a word\nEnter 5 to quit")
+
 while True:
-    print("##################")
-    print("Enter 1 to load dictionary \nEnter 2 to print Dictionary Size")
-    print("Enter 3 to insert word \nEnter 4 to look up a word\nEnter 5 to quit")
+    print()
     op = input("Enter Operation number: ")
     if op == "1":
         f = open("dictionary.txt")
