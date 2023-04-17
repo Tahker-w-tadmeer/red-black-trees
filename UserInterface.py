@@ -10,7 +10,7 @@ while True:
     print()
     op = input("Enter Operation number: ")
     if op == "1":
-        f = open("dictionary.txt")
+        f = open("dict.txt")
         for line in f:
             tree.insert(line.strip())
         print("Loaded dictionary")
