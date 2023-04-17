@@ -27,7 +27,7 @@ text_field.grid(row=1, column=1, padx=10, pady=5)
 
 def button_click(button_num):
     if button_num == 1:
-        f = open("dictionary.txt")
+        f = open("dict.txt")
         for line in f:
             tree.insert(line.strip())
         messagebox.showinfo("Info", "Loaded Dictionary")
