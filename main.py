@@ -1,7 +1,10 @@
 from rbtree import RBTree
+import sys
+
+sys.setrecursionlimit(10 ** 6)
 
 tree = RBTree()
-f = open("dictionary.txt")
+f = open("dict.txt")
 for line in f:
     tree.insert(line.strip())
 f.close()
