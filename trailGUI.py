@@ -30,7 +30,8 @@ def button_click(button_num):
         f = open("dict.txt")
         for line in f:
             tree.insert(line.strip())
-        messagebox.showinfo("Info", "Loaded Dictionary")
+        messagebox.showinfo("Info",
+                            "Word inserted\n" + "Size:" + str(tree.size()) + "\n" + "Height: " + str(tree.height()))
         f.close()
     elif button_num == 2:
         messagebox.showinfo("Info", "Size: " + str(tree.size()) + "\n" + "Height: " + str(tree.height()))
